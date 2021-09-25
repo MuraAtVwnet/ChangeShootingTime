@@ -25,8 +25,8 @@ On Windows
 	7.1.4
 
 ■ Web サイト
-Jpeg ファイルの GPS Exif を PowerShell で削除する
-https://www.vwnet.jp/Windows/PowerShell/2016051501/RemoveGPSExif.htm
+PowerShell で写真の撮影時間を変更する
+http://www.vwnet.jp/windows/PowerShell/2021092501/ChangeShootingTime.htm
 
 ■ リポジトリ
 https://github.com/MuraAtVwnet/ChangeShootingTime
