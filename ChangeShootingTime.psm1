@@ -1,7 +1,12 @@
 ﻿#######################################################
 # Jpeg の撮影時間を変更する
 #######################################################
-function ChangeShootingTime( $JpegFile, $Offset ){
+function ChangeShootingTime( $JpegFile, [double]$Offset ){
+
+	if( $Offset -eq 0 ){
+		return
+	}
+
 	# 拡張子チェック
 	$FileName = Split-Path $JpegFile -Leaf
 	if( (($FileName -split "\.")[1] -ne "jpg" ) -and (($FileName -split "\.")[1] -ne "jpeg" )){
@@ -47,7 +52,7 @@ function ChangeShootingTime( $JpegFile, $Offset ){
 
 	[array]$YYYYMMDDandHHMMSS = $DateString.Split(" ")
 	[datetime]$OriginalDateTime = $YYYYMMDDandHHMMSS[0].Replace(":","/") + " " + $YYYYMMDDandHHMMSS[1]
-	[datetime]$NewDateTime = $OriginalDateTime.AddHours(-9)
+	[datetime]$NewDateTime = $OriginalDateTime.AddHours($Offset)
 	$NewDateTimeString = $NewDateTime.ToString("yyyy:MM:dd HH:mm:ss")
 	[array] $NewDateBytes = [System.Text.Encoding]::ASCII.GetBytes($NewDateTimeString)
 
