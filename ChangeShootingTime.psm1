@@ -35,9 +35,10 @@ function ChangeShootingTime( $JpegFile, [double]$Offset ){
 	# Jpeg 読み込み
 	$bmp = New-Object System.Drawing.Bitmap($JpegFileFullName)
 
-	# 撮影日時
+	# 撮影日時のタグ
 	$DateTimeOriginalIndex = 0x9003
 
+	# 撮影日時を取得
 	Try{
 		$DateTimeOriginal = $bmp.GetPropertyItem($DateTimeOriginalIndex)
 	}
@@ -46,20 +47,24 @@ function ChangeShootingTime( $JpegFile, [double]$Offset ){
 		return
 	}
 
+	# 撮影日時のデータ
 	[array]$DateTimeOriginalBytes = $DateTimeOriginal.Value
 
+	# 文字列へ
 	$DateString = [System.Text.Encoding]::ASCII.GetString($DateTimeOriginalBytes)
 
+	# 日付を YYYY/MM/DD 形式にし、時間計算する
 	[array]$YYYYMMDDandHHMMSS = $DateString.Split(" ")
 	[datetime]$OriginalDateTime = $YYYYMMDDandHHMMSS[0].Replace(":","/") + " " + $YYYYMMDDandHHMMSS[1]
 	[datetime]$NewDateTime = $OriginalDateTime.AddHours($Offset)
+
+	# Exif の日付形式にする
 	$NewDateTimeString = $NewDateTime.ToString("yyyy:MM:dd HH:mm:ss")
 	[array] $NewDateBytes = [System.Text.Encoding]::ASCII.GetBytes($NewDateTimeString)
-
 	$NewDateBytes += 0x00
 
+	# データセット
 	$DateTimeOriginal.Value = $NewDateBytes
-
 	$bmp.SetPropertyItem($DateTimeOriginal)
 
 	# ファイル出力
@@ -72,4 +77,9 @@ function ChangeShootingTime( $JpegFile, [double]$Offset ){
 	$New_FileName = $Org_FileName.Split(".")[0] + "-ORG." + $Org_FileName.Split(".")[1]
 	ren $JpegFileFullName $New_FileName
 	ren $TempFile $JpegFileFullName
+
+	# 変更した日時の表示
+	$OriginalDateTimeString = $OriginalDateTime.ToString("yyyy/MM/dd HH:mm:ss")
+	$NewDateTimeString = $NewDateTime.ToString("yyyy/MM/dd HH:mm:ss")
+	Write-Output "$OriginalDateTimeString -> $NewDateTimeString"
 }
